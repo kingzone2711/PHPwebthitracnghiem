@@ -1,0 +1,15 @@
+SELECT COUNT(cthocphan.KetQuaChon) AS SOCAUDUNG FROM cthocphan,cauhoi
+WHERE cthocphan.MaCH=cauhoi.MaCH
+and cthocphan.MaSV=1
+AND cthocphan.KetQuaChon=cauhoi.DapAn
+
+
+SELECT cauhoi.MaHP,cauhoi.MaDe,cauhoi.CauSo,cauhoi.DapAn,cthocphan.KetQuaChon
+FROM cthocphan,cauhoi
+WHERE cthocphan.MaCH=cauhoi.MaCH
+
+SELECT cauhoi.MaHP,cauhoi.MaDe,cauhoi.CauSo,cauhoi.NDCauHoi,cauhoi.A,cauhoi.B,cauhoi.C,cauhoi.D, cauhoi.DapAn,cthocphan.KetQuaChon
+FROM cthocphan,cauhoi
+WHERE cthocphan.MaCH=cauhoi.MaCH
+
+

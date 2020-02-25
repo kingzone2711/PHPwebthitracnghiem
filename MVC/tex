@@ -1,0 +1,226 @@
+<?php
+             $MaHocPhan = addslashes($_GET['MaHocPhan']);
+             
+             // Nếu $search rỗng thì báo lỗi, tức là người dùng chưa nhập liệu mà đã nhấn submit.
+                 // Dùng câu lênh like trong sql và sứ dụng toán tử % của php để tìm kiếm dữ liệu chính xác hơn.
+                 $sql = "select * from hocphan where MaHocPhan= '$MaHocPhan'";
+                
+                 $servername="localhost";$username="root";$password="";
+                 $dbname="mysql_ltpm";           
+                 $conn= mysqli_connect($servername,$username,$password,$dbname);
+                 !$conn->set_charset("utf8");
+                 // Kết nối sql
+                 $result=mysqli_query($conn,$sql);
+                 // Thực thi câu truy vấn
+  
+                 // Nếu có kết quả thì hiển thị, ngược lại thì thông báo không tìm thấy kết quả
+ 
+ 
+                     while($row=mysqli_fetch_array($result,MYSQLI_ASSOC))
+                     {
+                       $MaHocPhan=$row['MaHocPhan'];
+                       $TenHocPhan=$row['TenHocPhan'];
+                       $MaLop=$row['MaLop'];
+                       $Time_Start=$row['Time_Start'];
+                       $Time_Stop=$row['Time_Stop'];
+                       $Time_Play=$row['Time_Play'];
+                     }
+?>
+                    
+            
+<?php
+session_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link href="assets/img/logo/logo.png" rel="icon">
+  <title>Đăng Nhập - Trắc nghiệm học đường</title>
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="css/ruang-admin.min.css" rel="stylesheet">
+  <?php 
+      require_once('./data.php');
+?>
+</head>
+
+<body class="bg-gradient-login">
+<?php
+	//Gọi file connection.php ở bài trước
+  require_once('./conf.php');
+	// Kiểm tra nếu người dùng đã ân nút đăng nhập thì mới xử lý
+	if (isset($_POST["btn_submit"])) {
+		// lấy thông tin người dùng
+		$username = $_POST["username"];
+		$password = $_POST["password"];
+		//làm sạch thông tin, xóa bỏ các tag html, ký tự đặc biệt 
+		//mà người dùng cố tình thêm vào để tấn công theo phương thức sql injection
+		$username = strip_tags($username);
+		$username = addslashes($username);
+		$password = strip_tags($password);
+		$password = addslashes($password);
+		if ($username == "" || $password =="") {
+			echo "username hoặc password bạn không được để trống!";
+		}else{
+			$sql = "SELECT * FROM sinhvien where TenDN = '$username' and MatKhau = '$password' ";
+			$query = mysqli_query($conn,$sql);
+			$num_rows = mysqli_num_rows($query);
+			if ($num_rows==0) {
+				echo "tên đăng nhập hoặc mật khẩu không đúng !";
+			}else{
+				//tiến hành lưu tên đăng nhập vào session để tiện xử lý sau này
+				$_SESSION['username'] = $username;
+                // Thực thi hành động sau khi lưu thông tin vào session
+                // ở đây mình tiến hành chuyển hướng trang web tới một trang gọi là index.php
+                header('Location: index.php');
+			}
+		}
+	}
+?>
+  <!-- Login Content -->
+  <div class="container-login">
+    <div class="row justify-content-center">
+      <div class="col-xl-10 col-lg-12 col-md-9">
+        <div class="card shadow-sm my-5">
+          <div class="card-body p-0">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="login-form">
+                  <div class="text-center">
+                  <h1 class=" h3 mb-4" style="color:blue;size:20">Trắc nghiệm học đường</h1>
+                    <h1 class="h4 text-gray-900 mb-4">Đăng Nhập</h1>
+                  </div>
+                  <form class="user">
+                    <div class="form-group">
+                      <input type="text" name="username" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp"
+                        placeholder="Nhập tài khoản...">
+                    </div>
+                    <div class="form-group">
+                      <input type="password" name="password" class="form-control" id="exampleInputPassword" placeholder="Mật Khẩu">
+                    </div>
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox small" style="line-height: 1.5rem;">
+                        <input type="checkbox" class="custom-control-input" id="customCheck">
+                        <label class="custom-control-label" for="customCheck">Nhớ tài khoản
+                          </label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                    <input name="btn_submit" type="submit" value="Đăng nhập" class="btn btn-primary btn-block">
+                      <a href="index.php" class="btn btn-primary btn-block">Đăng Nhập</a>
+                    </div>
+                    <hr>
+                    <a href="#" class="btn btn-google btn-block">
+                      <i class="fab fa-google fa-fw"></i> Đăng nhập với Google
+                    </a>
+                    <a href="#." class="btn btn-facebook btn-block">
+                      <i class="fab fa-facebook-f fa-fw"></i> Đăng Nhập với Facebook
+                    </a>
+                  </form>
+                  <hr>
+                  <div class="text-center">
+                    <a class="font-weight-bold small" href="register.html">Tạo tài khoản mới.!</a>
+                  </div>
+                  <div class="text-center">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Login Content -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="js/ruang-admin.min.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+session_start();
+?>
+<html>
+<head>
+	<title>Trang đăng nhập</title>
+	<meta charset="utf-8">
+</head>
+<body>
+<?php
+	//Gọi file connection.php ở bài trước
+  require_once('./conf.php');
+	// Kiểm tra nếu người dùng đã ân nút đăng nhập thì mới xử lý
+	if (isset($_POST["btn_submit"])) {
+		// lấy thông tin người dùng
+		$username = $_POST["username"];
+		$password = $_POST["password"];
+		//làm sạch thông tin, xóa bỏ các tag html, ký tự đặc biệt 
+		//mà người dùng cố tình thêm vào để tấn công theo phương thức sql injection
+		$username = strip_tags($username);
+		$username = addslashes($username);
+		$password = strip_tags($password);
+		$password = addslashes($password);
+		if ($username == "" || $password =="") {
+			echo "username hoặc password bạn không được để trống!";
+		}else{
+			$sql = "SELECT * FROM sinhvien where TenDN = '$username' and MatKhau = '$password' ";
+			$query = mysqli_query($conn,$sql);
+			$num_rows = mysqli_num_rows($query);
+			if ($num_rows==0) {
+				echo "tên đăng nhập hoặc mật khẩu không đúng !";
+			}else{
+				//tiến hành lưu tên đăng nhập vào session để tiện xử lý sau này
+				$_SESSION['username'] = $username;
+                // Thực thi hành động sau khi lưu thông tin vào session
+                // ở đây mình tiến hành chuyển hướng trang web tới một trang gọi là index.php
+                header('Location: index.php');
+			}
+		}
+	}
+?>
+	<form method="POST" action="login.php">
+	<fieldset>
+	    <legend>Đăng nhập</legend>
+	    	<table>
+	    		<tr>
+	    			<td>Username</td>
+	    			<td><input type="text" name="username" size="30"></td>
+	    		</tr>
+	    		<tr>
+	    			<td>Password</td>
+	    			<td><input type="password" name="password" size="30"></td>
+	    		</tr>
+	    		<tr>
+	    			<td colspan="2" align="center"> <input name="btn_submit" type="submit" value="Đăng nhập"></td>
+	    		</tr>
+	    	</table>
+  </fieldset>
+  </form>
+</body>
+</html>
+
+
+
+<a href="./quiz.php?MaHocPhan='.$MaHocPhan.'" class="btn btn-primary" style="margin-left: auto; margin-right: auto; display: block;width: 100px;color: white;">Kiểm Tra</a>
